@@ -7,16 +7,32 @@ Name: BlockStacker MK2
 
 Description: This program is going to be used on the BlockStacker bot. This robot is equipped with a camera and a height adjustable claw to stack the colored blocks. The method for color tracking will be to directly look for the color then use the track_confidence() function to idenity the correct color in the sequence. It will first scan for the blue block then
 
-TODO:
+TODO: Figure out how to stack blocks in MPA without losing track of location
 
 NOTES: If track confidence is above 50, use it.
 */
 
+/* Motor ports */
+int LEFT_MOTOR = 0;
+int RIGHT_MOTOR = 3;
+int PULLEY_MOTOR = 1;
+
+/* Track setups here */
 int BLUE_TRACK = 3; //Blue tracking is on track 3
 int YELLOW_TRACK = 1; //Yellow tracking is on track 1
 int RED_TRACK = 0; //Red tracking is on track 0
 
-void update()
+void MOVE_RIGHT()
+{
+	
+}
+
+void MOVE_LEFT()
+{
+	
+}
+
+void update()//Because I wanted it shorter.
 {
 	track_update();
 }
@@ -24,13 +40,40 @@ void update()
 void scan_blue()
 {
 	update();
-	int blue_confidence = track_confidence(BLUE_TRACK,1);
-	printf("%d\n",blue_confidence)
+	int blue_x = track_x(BLUE_TRACK,0);
+	int blue_y = track_y(BLUE_TRACK,0);
+	
 }
 
-void scan_yellow()
+void track_yellow()//Looks for large yellow blob (block) and follows it then grabs it.
 {
 	update();
+	int yellow_x = track_x(YELLOW_TRACK,0);
+	int yellow_y = track_y(YELLOW_TRACK,0);
+	if(yellow_x < 70)
+	{
+		update();//Is this needed?
+		while(yellow_x < 70)
+		{
+			MOVE_RIGHT();
+			sleep(.1);
+			update();
+		}
+	}
+	else if(yellow_x > 90)
+	{
+		update();//Is this needed?
+		while(yellow_x < 90)
+		{
+			MOVE_LEFT();
+			sleep(.1);
+			update();
+		}
+	}
+	else
+	{
+		DRIVE_STRAIGHT();//Drive until you hit the yellow block
+	}
 	
 }
 
@@ -40,20 +83,19 @@ void scan_red()
 }
 
 int main()
-{/* TESTING track_confidence()
+{
+	int time = 6;
 	track_update();
-	track_confidence(0,1);
-	printf("Testing RED: %d\n",track_confidence(0,1));
-	sleep(4);
+	track_confidence(0,0);
+	printf("Testing RED: %d, %d\n",track_confidence(0,0), track_size(0,0));
+	sleep(time);
 	
 	track_update();
-	track_confidence(1,1);
-	printf("Testing YELLOW: %d\n",track_confidence(1,1));
-	sleep(4);
+	printf("Testing YELLOW: %d, %d\n",track_confidence(1,0), track_size(1,0));
+	sleep(time);
 	
 	track_update();
-	track_confidence(3,1);
-	printf("Testing BLUE: %d\n",track_confidence(3,1));
-	sleep(4);
-	*/
+	printf("Testing BLUE: %d, %d\n",track_confidence(3,0), track_size(3,0));
+	sleep(time);
+	
 }
