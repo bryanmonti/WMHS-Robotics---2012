@@ -22,14 +22,21 @@ int BLUE_TRACK = 3; //Blue tracking is on track 3
 int YELLOW_TRACK = 1; //Yellow tracking is on track 1
 int RED_TRACK = 0; //Red tracking is on track 0
 
-void MOVE_RIGHT()
+void DRIVE_STRAIGHT()
 {
 	
 }
 
-void MOVE_LEFT()
+void TURN_RIGHT()
 {
-	
+	mav(LEFT_MOTOR,500);
+	mav(RIGHT_MOTOR,-500);//This negative may have to be flipped
+}
+
+void TURN_LEFT()
+{
+	mav(LEFT_MOTOR,-500);
+	mav(RIGHT_MOTOR,500);//Change the negative if needed
 }
 
 void update()//Because I wanted it shorter.
@@ -55,7 +62,7 @@ void track_yellow()//Looks for large yellow blob (block) and follows it then gra
 		update();//Is this needed?
 		while(yellow_x < 70)
 		{
-			MOVE_RIGHT();
+			TURN_RIGHT();
 			sleep(.1);
 			update();
 		}
@@ -65,7 +72,7 @@ void track_yellow()//Looks for large yellow blob (block) and follows it then gra
 		update();//Is this needed?
 		while(yellow_x < 90)
 		{
-			MOVE_LEFT();
+			TURN_LEFT();
 			sleep(.1);
 			update();
 		}
