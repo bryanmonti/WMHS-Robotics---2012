@@ -18,28 +18,90 @@ it. It will then place it in the MPA and move onto the
 TODO: Figure out how to stack blocks in MPA without losing track of location
 
 NOTES: 
-1. If track confidence is above 50, use it.
+1. If track confidence returns a value >= 50, use it.
 2. Robot must start with claw in open position.
 ***************************************************** 
 */
+#pragma region DEFINES
+#define BOTTOM 0
+#define MIDDLE 1
+#define TOP 2
+#define OPEN 1
+#define CLOSED 0
+#pragma endregion
 
-int claw_state = 1;
+int position = BOTTOM;//claw starts in bottom position
+int claw_state = OPEN;//claw starts in open position
 
-/* Motor ports */
+#pragma region Motor ports
 int LEFT_MOTOR = 0;
 int RIGHT_MOTOR = 3;
 int PULLEY_MOTOR = 1;
+#pragma endregion
 
-/* Servo ports */
+#pragma region Servo ports
 int CLAW_SERVO = 0;
+#pragma endregion
 
-/* Track setups here */
+#pragma region Track setups here
 int BLUE_TRACK = 3; //Blue tracking is on track 3
 int YELLOW_TRACK = 1; //Yellow tracking is on track 1
 int RED_TRACK = 0; //Red tracking is on track 0
+#pragma endregion
 
-/* Function Prototypes */
-void open_claw()
+#pragma region Function Prototypes
+
+void claw_position(position)
+{
+	switch(position)
+	{
+		case BOTTOM:
+			if(position != BOTTOM)//to prevent the claw from damage or falling off slide
+			{
+				if(position == TOP)
+				{
+					//move down 4 seconds
+				}
+				else if(position == MIDDLE)
+				{
+					//move down 2 seconds
+				}
+			}
+			break;
+
+		case MIDDLE:
+			if(position != MIDDLE)//to prevent the claw from damage or falling off slide
+			{
+				if(position == BOTTOM)
+				{
+					//move up 2 seconds
+				}
+				else if(position == TOP)
+				{
+					//move down 2 seconds
+				}
+			}
+			break;
+
+		case TOP://Goal is to be in TOP position
+			if(position != TOP)//to prevent the claw from smashing or falling off slide
+			{
+				if(position == BOTTOM)
+				{
+					//move up 4 seconds
+				}
+				else if(position == MIDDLE)
+				{
+					//move up 2 seconds
+				}
+			}
+			break;
+	}
+
+	}
+}//Well, that's a fuck load of code.
+
+void open_claw()//try condensing this into one function like above
 {
 	if(claw_state != 1)
 	{
@@ -57,6 +119,7 @@ void close_claw()
 	if(claw_state != 0)
 	{
 		set_servo_position(CLAW_SERVO,250);
+		claw_state = 0;
 	}
 	else //Error checking
 	{
@@ -123,15 +186,20 @@ void track_yellow()//Looks for large yellow blob (block) and follows it then gra
 	}
 	else
 	{
-		DRIVE_STRAIGHT();//Drive until you hit the yellow block
-	}
+		while(digital(8) == 0)
+		{
+			DRIVE_STRAIGHT();//Drive until you hit the yellow block
 	
+		}
+	}
 }
 
 void scan_red()
 {
 	update();
 }
+
+#pragma endregion
 
 int main()
 {
