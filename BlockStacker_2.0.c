@@ -43,8 +43,8 @@ void open_claw()
 {
 	if(claw_state != 1)
 	{
-	set_servo_position(CLAW_SERVO,1300);
-	claw_state = 1;
+		set_servo_position(CLAW_SERVO,1300);
+		claw_state = 1;
 	}
 	else //Error checking
 	{
@@ -88,7 +88,7 @@ void update()//Because I wanted it shorter.
 	track_update();
 }
 
-void scan_blue()
+void track_blue()
 {
 	update();
 	int blue_x = track_x(BLUE_TRACK,0);
