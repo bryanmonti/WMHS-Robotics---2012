@@ -30,7 +30,7 @@ NOTES:
 #define CLOSED 0
 #pragma endregion
 
-int position = BOTTOM;//claw starts in bottom position
+int current_position = BOTTOM;//claw starts in bottom position
 int claw_state = OPEN;//claw starts in open position
 
 #pragma region Motor ports
@@ -51,48 +51,62 @@ int RED_TRACK = 0; //Red tracking is on track 0
 
 #pragma region Function Prototypes
 
+int speed = 750;
+
 void claw_position(position)
 {
 	switch(position)
 	{
 		case BOTTOM:
-			if(position != BOTTOM)//to prevent the claw from damage or falling off slide
+			if(current_position != BOTTOM)//to prevent the claw from damage or falling off slide
 			{
-				if(position == TOP)
+				if(current_position == TOP)
 				{
-					//move down 4 seconds
+					move_to_position(PULLEY_MOTOR,-750,0);
+					sleep(15);
+					current_position = BOTTOM;	
 				}
-				else if(position == MIDDLE)
+				else if(current_position == MIDDLE)
 				{
-					//move down 2 seconds
+					move_to_position(PULLEY_MOTOR,-750,0);
+					sleep(15);
+					current_position = BOTTOM;
 				}
 			}
 			break;
 
 		case MIDDLE:
-			if(position != MIDDLE)//to prevent the claw from damage or falling off slide
+			if(current_position != MIDDLE)//to prevent the claw from damage or falling off slide
 			{
-				if(position == BOTTOM)
+				if(current_position == BOTTOM)
 				{
-					//move up 2 seconds
+					move_to_position(PULLEY_MOTOR,750,6000);
+					sleep(15);
+					current_position = MIDDLE;
 				}
-				else if(position == TOP)
+				else if(current_position == TOP)
 				{
-					//move down 2 seconds
+					move_to_position(PULLEY_MOTOR,-750,6000);
+					sleep(15);
+					current_position = MIDDLE;
 				}
 			}
 			break;
 
 		case TOP://Goal is to be in TOP position
-			if(position != TOP)//to prevent the claw from smashing or falling off slide
+			if(current_position != TOP)//to prevent the claw from smashing or falling off slide
 			{
-				if(position == BOTTOM)
+				if(current_position == BOTTOM)
 				{
-					//move up 4 seconds
+					move_to_position(PULLEY_MOTOR,750,12000);
+					sleep(15);
+					current_position = TOP;
 				}
-				else if(position == MIDDLE)
+				else if(current_position == MIDDLE)
 				{
-					//move up 2 seconds
+					move_to_position(PULLEY_MOTOR,750,12000);
+					sleep(15);
+					current_position = TOP;
 				}
 			}
 			break;
@@ -202,18 +216,9 @@ void scan_red()
 
 int main()
 {
-	int time = 6;
-	track_update();
-	track_confidence(0,0);
-	printf("Testing RED: %d, %d\n",track_confidence(0,0), track_size(0,0));
-	sleep(time);
-	
-	track_update();
-	printf("Testing YELLOW: %d, %d\n",track_confidence(1,0), track_size(1,0));
-	sleep(time);
-	
-	track_update();
-	printf("Testing BLUE: %d, %d\n",track_confidence(3,0), track_size(3,0));
-	sleep(time);
-	
+	clear_motor_position_counter(PULLEY_MOTOR);
+	claw_position(TOP);
+	claw_position(BOTTOM);
+	claw_position(MIDDLE);
+	claw_position(BOTTOM);
 }
