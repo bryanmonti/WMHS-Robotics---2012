@@ -98,7 +98,6 @@ void claw_position(position)
 			break;
 	}
 
-	}
 }//Well, that's a fuck load of code.
 
 void open_claw()//try condensing this into one function like above
@@ -127,11 +126,11 @@ void close_claw()
 	}
 }
 
-void DRIVE_STRAIGHT(int drive_time)
+void DRIVE_STRAIGHT()
 {
 	mav(LEFT_MOTOR,500);
 	mav(RIGHT_MOTOR,500);
-	sleep(drive_time);
+	sleep(1);
 }
 
 void TURN_RIGHT()
@@ -140,7 +139,7 @@ void TURN_RIGHT()
 	mav(RIGHT_MOTOR,-500);//This negative may have to be flipped
 }
 
-void TURN_LEFT()
+void TURN_LEFT()//setup 45, 90, 135, 180 turns
 {
 	mav(LEFT_MOTOR,-500);
 	mav(RIGHT_MOTOR,500);//Change the negative if needed
@@ -189,7 +188,7 @@ void track_yellow()//Looks for large yellow blob (block) and follows it then gra
 		while(digital(8) == 0)
 		{
 			DRIVE_STRAIGHT();//Drive until you hit the yellow block
-	
+			sleep(1);
 		}
 	}
 }
