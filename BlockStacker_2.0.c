@@ -102,7 +102,7 @@ void claw_position(position)
 				}
 				else if(current_position == MIDDLE)
 				{
-					move_to_position(PULLEY_MOTOR,750,12000);
+					move_to_position(PULLEY_MOTOR,1000,12000);
 					sleep(15);
 					current_position = TOP;
 				}
@@ -114,10 +114,10 @@ void claw_position(position)
 
 void open_claw()//try condensing this into one function like above
 {
-	if(claw_state != 1)
+	if(claw_state != OPEN)
 	{
 		set_servo_position(CLAW_SERVO,1300);
-		claw_state = 1;
+		claw_state = OPEN;
 	}
 	else //Error checking
 	{
@@ -127,10 +127,10 @@ void open_claw()//try condensing this into one function like above
 
 void close_claw()
 {
-	if(claw_state != 0)
+	if(claw_state != CLOSED)
 	{
 		set_servo_position(CLAW_SERVO,250);
-		claw_state = 0;
+		claw_state = CLOSED;
 	}
 	else //Error checking
 	{
@@ -140,15 +140,20 @@ void close_claw()
 
 void DRIVE_STRAIGHT()
 {
-	mav(LEFT_MOTOR,500);
-	mav(RIGHT_MOTOR,500);
-	sleep(1);
+	while(digital(8) == 0)
+	{
+		move_to_position(LEFT_MOTOR,1000,250);
+		move_to_position(RIGHT_MOTOR,1000,250);
+		sleep(1);
+		clear_motor_position_counter(LEFT_MOTOR);
+		clear_motor_position_counter(RIGHT_MOTOR);
+	}
 }
 
 void TURN_RIGHT()
 {
 	mav(LEFT_MOTOR,500);
-	mav(RIGHT_MOTOR,-500);//This negative may have to be flipped
+	mav(RIGHT_MOTOR,-500);
 }
 
 void TURN_LEFT()//setup 45, 90, 135, 180 turns
@@ -177,7 +182,7 @@ void track_yellow()//Looks for large yellow blob (block) and follows it then gra
 	int yellow_y = track_y(YELLOW_TRACK,0);
 	if(yellow_x < 70)
 	{
-		update();//Is this needed?
+		update();
 		while(yellow_x < 70)
 		{
 			TURN_RIGHT();
@@ -187,8 +192,8 @@ void track_yellow()//Looks for large yellow blob (block) and follows it then gra
 	}
 	else if(yellow_x > 90)
 	{
-		update();//Is this needed?
-		while(yellow_x < 90)
+		update();
+		while(yellow_x > 90)
 		{
 			TURN_LEFT();
 			sleep(.1);
@@ -197,26 +202,65 @@ void track_yellow()//Looks for large yellow blob (block) and follows it then gra
 	}
 	else
 	{
-		while(digital(8) == 0)
+		while(yellow_x > 70 && yellow_y < 90)
 		{
 			DRIVE_STRAIGHT();//Drive until you hit the yellow block
-			sleep(1);
+			sleep(.3);
 		}
+		close_claw();
+		sleep(1);
 	}
 }
 
-void scan_red()
+void track_red()//Looks for large red blob (block) and follows it then grabs it, and proceeds to stack it.
 {
 	update();
+	int red_x = track_x(RED_TRACK,0);
+	int red_y = track_y(RED_TRACK,0);
+	if(red_x < 70)
+	{
+		update();
+		while(red_x < 70)
+		{
+			TURN_RIGHT();
+			sleep(.1);
+			update();
+		}
+	}
+	else if(red_x > 90)
+	{
+		update();
+		while(red_x > 90)
+		{
+			TURN_LEFT();
+			sleep(.1);
+			update();
+		}
+	}
+	else
+	{
+		while(red_x > 70 && red_y < 90)
+		{
+			DRIVE_STRAIGHT();//Drive until you hit the yellow block
+			sleep(.3);
+		}
+		close_claw();
+		sleep(1);
+	}
 }
 
 #pragma endregion
 
 int main()
 {
+	scan_yellow();
+	track_yellow();
+	//locate_mpa(); //MPA has a pink or green sheet to it, use the camera to locate it and bump into it to put the blocks in
+	/* TESTS CLAW PULLEY
 	clear_motor_position_counter(PULLEY_MOTOR);
 	claw_position(TOP);
 	claw_position(BOTTOM);
 	claw_position(MIDDLE);
 	claw_position(BOTTOM);
+	*/
 }
