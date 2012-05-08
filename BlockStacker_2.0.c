@@ -51,8 +51,6 @@ int RED_TRACK = 0; //Red tracking is on track 0
 
 #pragma region Function Prototypes
 
-int speed = 750;
-
 void claw_position(position)
 {
 	switch(position)
@@ -62,14 +60,14 @@ void claw_position(position)
 			{
 				if(current_position == TOP)
 				{
-					move_to_position(PULLEY_MOTOR,-750,0);
-					sleep(15);
+					move_to_position(PULLEY_MOTOR,-1000,0);
+					sleep(15);//check to see if you can cut time
 					current_position = BOTTOM;	
 				}
 				else if(current_position == MIDDLE)
 				{
-					move_to_position(PULLEY_MOTOR,-750,0);
-					sleep(15);
+					move_to_position(PULLEY_MOTOR,-1000,0);
+					sleep(8);//check if this needs more time
 					current_position = BOTTOM;
 				}
 			}
@@ -80,14 +78,14 @@ void claw_position(position)
 			{
 				if(current_position == BOTTOM)
 				{
-					move_to_position(PULLEY_MOTOR,750,6000);
-					sleep(15);
+					move_to_position(PULLEY_MOTOR,1000,6000);
+					sleep(15);//check to see if you can cut time
 					current_position = MIDDLE;
 				}
 				else if(current_position == TOP)
 				{
-					move_to_position(PULLEY_MOTOR,-750,6000);
-					sleep(15);
+					move_to_position(PULLEY_MOTOR,-1000,6000);//negative because its going from TOP to BOTTOM
+					sleep(8);//check if this is enough time
 					current_position = MIDDLE;
 				}
 			}
@@ -98,7 +96,7 @@ void claw_position(position)
 			{
 				if(current_position == BOTTOM)
 				{
-					move_to_position(PULLEY_MOTOR,750,12000);
+					move_to_position(PULLEY_MOTOR,1000,12000);
 					sleep(15);
 					current_position = TOP;
 				}
