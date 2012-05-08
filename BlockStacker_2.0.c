@@ -51,7 +51,7 @@ int YELLOW_TRACK = 1; //Yellow tracking is on track 1
 int RED_TRACK = 0; //Red tracking is on track 0
 #pragma endregion
 
-#pragma region Function Prototypes
+//#pragma region Function Prototypes
 
 #pragma region Claw_Height
 void claw_position(position)
@@ -64,13 +64,13 @@ void claw_position(position)
 				if(current_position == TOP)
 				{
 					move_to_position(PULLEY_MOTOR,-1000,0);
-					sleep(15);//check to see if you can cut time
+					sleep(10);//check to see if you can cut time
 					current_position = BOTTOM;	
 				}
 				else if(current_position == MIDDLE)
 				{
 					move_to_position(PULLEY_MOTOR,-1000,0);
-					sleep(8);//check if this needs more time
+					sleep(6);//check if this needs more time
 					current_position = BOTTOM;
 				}
 			}
@@ -82,13 +82,13 @@ void claw_position(position)
 				if(current_position == BOTTOM)
 				{
 					move_to_position(PULLEY_MOTOR,1000,6000);
-					sleep(15);//check to see if you can cut time
+					sleep(10);//check to see if you can cut time
 					current_position = MIDDLE;
 				}
 				else if(current_position == TOP)
 				{
 					move_to_position(PULLEY_MOTOR,-1000,6000);//negative because its going from TOP to BOTTOM
-					sleep(8);//check if this is enough time
+					sleep(6);//check if this is enough time
 					current_position = MIDDLE;
 				}
 			}
@@ -100,13 +100,13 @@ void claw_position(position)
 				if(current_position == BOTTOM)
 				{
 					move_to_position(PULLEY_MOTOR,1000,12000);
-					sleep(15);
+					sleep(10);
 					current_position = TOP;
 				}
 				else if(current_position == MIDDLE)
 				{
 					move_to_position(PULLEY_MOTOR,1000,12000);
-					sleep(15);
+					sleep(6);
 					current_position = TOP;
 				}
 			}
@@ -146,6 +146,7 @@ void close_claw()
 }
 #pragma endregion
 
+#pragma region Drive_Straight
 void DRIVE_STRAIGHT()
 {
 	while(digital(8) == 0)
@@ -157,32 +158,41 @@ void DRIVE_STRAIGHT()
 		clear_motor_position_counter(RIGHT_MOTOR);
 	}
 }
+#pragma endregion
 
+#pragma region Turn_right
 void TURN_RIGHT()
 {
 	mav(LEFT_MOTOR,500);
 	mav(RIGHT_MOTOR,-500);
 }
+#pragma endregion
 
+#pragma region Turn_left
 void TURN_LEFT()//setup 45, 90, 135, 180 turns
 {
 	mav(LEFT_MOTOR,-500);
 	mav(RIGHT_MOTOR,500);//Change the negative if needed
 }
+#pragma endregion
 
+#pragma region Update
 void update()//Because I wanted it shorter.
 {
 	track_update();
 }
+#pragma endregion
 
+#pragma region Track_blue
 void track_blue()
 {
 	update();
 	int blue_x = track_x(BLUE_TRACK,0);
 	int blue_y = track_y(BLUE_TRACK,0);
-	
 }
+#pragma endregion
 
+#pragma region Track_yellow
 void track_yellow()//Looks for large yellow blob (block) and follows it then grabs it.
 {
 	update();
@@ -219,7 +229,9 @@ void track_yellow()//Looks for large yellow blob (block) and follows it then gra
 		sleep(1);
 	}
 }
+#pragma endregion
 
+#pragma region Track_red
 void track_red()//Looks for large red blob (block) and follows it then grabs it, and proceeds to stack it.
 {
 	update();
@@ -259,16 +271,24 @@ void track_red()//Looks for large red blob (block) and follows it then grabs it,
 
 #pragma endregion
 
+#pragma endregion
 int main()
 {
-	scan_yellow();
-	track_yellow();
+	//scan_yellow();
+	//track_yellow();
 	//locate_mpa(); //MPA has a pink or green sheet to it, use the camera to locate it and bump into it to put the blocks in
-	/* TESTS CLAW PULLEY
+	// TESTS CLAW PULLEY
+	set_servo_position(CLAW_SERVO,1300);
+	sleep(1);
+	close_claw();
 	clear_motor_position_counter(PULLEY_MOTOR);
 	claw_position(TOP);
 	claw_position(BOTTOM);
 	claw_position(MIDDLE);
 	claw_position(BOTTOM);
-	*/
+	claw_position(MIDDLE);
+	claw_position(TOP);
+	claw_position(MIDDLE);
+	claw_position(BOTTOM);
+	
 }
