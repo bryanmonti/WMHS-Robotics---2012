@@ -30,8 +30,10 @@ NOTES:
 #define CLOSED 0
 #pragma endregion
 
+#pragma region Startup Requirments
 int current_position = BOTTOM;//claw starts in bottom position
 int claw_state = OPEN;//claw starts in open position
+#pragma endregion
 
 #pragma region Motor ports
 int LEFT_MOTOR = 0;
@@ -51,6 +53,7 @@ int RED_TRACK = 0; //Red tracking is on track 0
 
 #pragma region Function Prototypes
 
+#pragma region Claw_Height
 void claw_position(position)
 {
 	switch(position)
@@ -111,7 +114,9 @@ void claw_position(position)
 	}
 
 }//Well, that's a fuck load of code.
+#pragma endregion
 
+#pragma region Open_Claw
 void open_claw()//try condensing this into one function like above
 {
 	if(claw_state != OPEN)
@@ -124,7 +129,9 @@ void open_claw()//try condensing this into one function like above
 		printf("I'm in the open position already!\n");
 	}
 }
+#pragma endregion
 
+#pragma region Close_Claw
 void close_claw()
 {
 	if(claw_state != CLOSED)
@@ -137,6 +144,7 @@ void close_claw()
 		printf("I'm in the closed position already!\n");
 	}
 }
+#pragma endregion
 
 void DRIVE_STRAIGHT()
 {
